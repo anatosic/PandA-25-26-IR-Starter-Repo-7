@@ -262,8 +262,8 @@ def main() -> None:
             if raw.startswith(":highlight"):
                 parts = raw.split()
                 if len(parts) == 2 and parts[1].lower() in ("on", "off"):
-                    config["highlight"] = parts[1].lower() == "on"
-                    print("Highlighting", "ON" if config["highlight"] else "OFF")
+                    config.highlight = parts[1].lower() == "on"
+                    print("Highlighting", "ON" if config.highlight else "OFF")
                     save_config(config)
                 else:
                     print("Usage: :highlight on|off")
