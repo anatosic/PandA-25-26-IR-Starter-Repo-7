@@ -111,6 +111,8 @@ def combine_results(result1: SearchResult, result2: SearchResult) -> SearchResul
         key=lambda lm: lm.line_no
     )
 
+    combined.matches = len(combined.line_matches) + sum(len(lm.spans) for lm in combined.line_matches)
+
     return combined
 
 
@@ -199,7 +201,7 @@ def load_sonnets() -> List[Sonnet]:
     print(f"Downloaded sonnets from PoetryDB. Took {(end - start) * 1000:.2f}ms.")
 
     with open(cache_path, "w", encoding="utf-8") as f:
-        json.dump([vars(s) for s in data], f, indent=2)
+        json.dump([vars(s) for s in data], f, indent=2, ensure_ascii=False)
 
     # Default implementation: Load from the API always
 
@@ -241,7 +243,7 @@ def save_config(cfg: Configuration) -> None:
     path = module_relative_path("config.json")
 
     with open(path, "w", encoding="utf-8") as f:
-        json.dump(cfg, f, indent=2, ensure_ascii=False)
+        json.dump(vars(cfg), f, indent=2, ensure_ascii=False)
 
 
 # ---------- CLI loop ----------
@@ -253,8 +255,10 @@ def main() -> None:
     # Load sonnets (from cache or API)
     # ToDo 0: Time how long loading the sonnets take and print it to the console (copy from Part 6)
 
+    start = time.perf_counter()
     sonnets = load_sonnets()
-
+    end = time.perf_counter()
+    print(f"Total loading time: {(end - start) * 1000:.2f}ms.")
     print(f"Loaded {len(sonnets)} sonnets.")
 
     while True:
